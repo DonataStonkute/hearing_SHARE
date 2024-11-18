@@ -35,7 +35,7 @@ dtm <- dta %>% filter(gender=="Men")
 dtf <- dta %>% filter(gender=="Women")
 
 # Get a standard population 
-## remember to use age intervals according to population sub-groups in question
+## Remember to use age intervals according to the population sub-groups in question !!!
 euro_pop <- euro_pop %>% 
   mutate(pop = ESP * 100000) %>% 
   filter(Age >= 50) %>% 
@@ -46,6 +46,16 @@ euro_pop <- euro_pop %>%
   select(Age, ESP)
 
 sum(euro_pop$ESP)
+
+## If you are interested in age restriction, e.g., 50-64, follow the code below instead: !!!
+# euro_pop <- euro_pop %>% 
+#   mutate(pop = ESP * 100000) %>% 
+#   filter(Age >= 50 & Age < 65) %>% 
+#   mutate(total = sum(pop),
+#          ESP = pop/total) %>% 
+#   select(Age, ESP)
+# 
+# sum(euro_pop$ESP)
 
 
 # Bootstrapping -----------------------------------------------------------
@@ -66,6 +76,20 @@ HL_ftion <- function(data, euro_pop, indices) {
     ) %>%
     mutate(weighted_prevalence = (weighted_HL_count / weighted_count)) %>% 
     ungroup() 
+
+
+  ## Had you been interested replicating Supplementary Figure 1A, follow the following code instead: !!!
+#  weighted_prevalence_r <- d %>%
+#    group_by(region, gender, edu, age_5) %>%
+#    mutate(HL_new = ifelse(hearaid == 1 | HL == 1, 1, 0)) %>%
+#    summarise(
+#    cases = sum(HL_new),
+#    weighted_HL_count = sum(HL_new * wtresp, na.rm = TRUE),
+#    weighted_count = sum(wtresp, na.rm = TRUE),
+#  ) %>%
+#  mutate(weighted_prevalence = (weighted_HL_count / weighted_count)) %>% 
+#  ungroup()
+
   
   asp_r <- weighted_prevalence_r %>%
     separate(age_5, c("Age", "second"), sep = "-") %>% 
@@ -144,7 +168,7 @@ HL_ftion <- function(data, euro_pop, indices) {
     mutate(RII = low/high,
            SII = low - high) 
   
-  # change this to rii_men$SII had you wanted to obtain absolute inequalities (see sensitivity analyses)
+  ## Change this to rii_men$SII if you want to obtain absolute inequalities (see sensitivity analyses) !!!
   results <- rii_men$RII 
   # print(results)
 
