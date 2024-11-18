@@ -4,6 +4,7 @@
 # The code shows an example for hearing loss (HL) and population 50+. If you are 
 # interested in hearing aid (HA) use and/or a different subgroup, make sure to
 # correspondingly change the outcome variable and analytical sub-sample in question. 
+# Useful comments regarding HA use are provided.
 #########################
 
 
@@ -30,6 +31,16 @@ Sys.setenv(LANG = "en")
 # euro_pop <- read.csv("your_directory/ESP2013.csv") 
 # dta <- fread("your_directory/analytical_sample.csv") 
 head(dta)
+
+## Had you been interested in hearing aid (HA) use prevalence, it is important to think about the denominator.
+## In the case of this study, it is not the whole population.
+## We consider HA use among 1) HA users; 2) those who self-report HL.
+## Follow the code below instead if you are estimating HA use prevalence, and change labels later accordingly.
+
+# dta_aid <- dta %>% 
+#   mutate(HL_new = ifelse(hearaid == 1 | HL == 1, 1, 0)) %>% 
+#   filter(HL_new == 1) %>% 
+#   select(-HL_new)
 
 dtm <- dta %>% filter(gender=="Men")
 dtf <- dta %>% filter(gender=="Women")
@@ -65,6 +76,7 @@ HL_ftion <- function(data, euro_pop, indices) {
     ) %>%
     mutate(weighted_prevalence = (weighted_cases / weighted_count)) %>% 
     ungroup() 
+
   
   asp_r <- weighted_prevalence_r %>%
     separate(age_5, c("Age", "second"), sep = "-") %>% 
